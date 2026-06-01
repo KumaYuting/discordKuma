@@ -1,0 +1,12 @@
+{
+  "name": "guild-war-bot",
+  "version": "1.0.0",
+  "main": "vote.js",
+  "scripts": {
+    "start": "node vote.js"
+  },
+  "dependencies": {
+    "axios": "^1.8.0",
+    "discord.js": "^14.22.1"
+  }
+}
