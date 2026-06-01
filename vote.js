@@ -1,5 +1,7 @@
-const botToken = process.env.DISCORD_TOKEN;
-const appID = process.env.APP_ID;
+// const botToken = process.env.DISCORD_TOKEN;
+// const appID = process.env.APP_ID;
+const botToken = 'MTQ1MTg3NTk5ODgzNTQwODkwNg.Gb3omh.VHU8QyFnFiDZ32Wj9hDq9As1vPwPTEVboZm4As';
+const appID = '1451875998835408906';
 
 const {
   Client,
