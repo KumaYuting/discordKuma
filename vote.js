@@ -156,8 +156,8 @@ client.on(Events.InteractionCreate, async interaction => {
           .setLabel('查看結果')
           .setStyle(ButtonStyle.Primary)
       );
-
-    await interaction.reply({
+    await interaction.deferReply({ flags: 64 });
+    await interaction.editReply({
       content: title,
       components: [row, row2]
     });
