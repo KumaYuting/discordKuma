@@ -136,7 +136,7 @@ client.on(Events.InteractionCreate, async interaction => {
         new ButtonBuilder()
           .setCustomId(`tw_yes_${date}`)
           .setLabel('只參加幫戰')
-          .setStyle(ButtonStyle.Primary),
+          .setStyle(ButtonStyle.Secondary),
 
         new ButtonBuilder()
           .setCustomId(`tw_maybe_${date}`)
@@ -193,10 +193,7 @@ if (interaction.isButton()) {
       // ===== GW =====
       if (mode === 'gw') {
 
-        const total =
-          data.yes.length +
-          data.maybe.length +
-          data.no.length;
+        const total = data.yes.length + data.maybe.length + data.no.length;
 
         await interaction.editReply({
           embeds: [{
@@ -221,11 +218,7 @@ if (interaction.isButton()) {
       // ===== TW =====
       if (mode === 'tw') {
 
-        const total =
-          data.full.length +
-          data.gw.length +
-          data.maybe.length +
-          data.no.length;
+        const total = data.full.length + data.yes.length + data.maybe.length + data.no.length;
 
         await interaction.editReply({
           embeds: [{
@@ -236,8 +229,8 @@ if (interaction.isButton()) {
               `🟢 幫戰+決賽 (${data.full.length})`,
               data.full.map(id => `<@${id}>`).join(' ') || '無',
               '',
-              `🔵 只參加幫戰 (${data.gw.length})`,
-              data.gw.map(id => `<@${id}>`).join(' ') || '無',
+              `🔵 只參加幫戰 (${data.yes.length})`,
+              data.yes.map(id => `<@${id}>`).join(' ') || '無',
               '',
               `🟡 不一定參加幫戰 (${data.maybe.length})`,
               data.maybe.map(id => `<@${id}>`).join(' ') || '無',
