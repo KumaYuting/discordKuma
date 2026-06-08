@@ -17,14 +17,17 @@ const {
 
 const axios = require('axios');
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds,]
-});
-
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxFJM6ia26L-70cREkSKpYtr3J_eI-gaOI_zpmR_z_KFzC5T5kF0ZIh8HxW6ftIX0GSPw/exec'
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzmHgzJMFI09M-tyr-OuSmP19dB5ck_BTRw5XbIeBbYMiCGMUdrwHZDdkwdZWFk0eBTVA/exec';
 
 // =======================
-// 📌 Slash Command 註冊
+// 🤖 Client
+// =======================
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds]
+});
+
+// =======================
+// 📌 Slash Commands
 // =======================
 const commands = [
   new SlashCommandBuilder()
@@ -59,266 +62,234 @@ const commands = [
 const rest = new REST({ version: '10' }).setToken(botToken);
 
 (async () => {
-  await rest.put(
-    Routes.applicationCommands(appID),
-    { body: commands }
-  );
-  console.log('Slash Command 已註冊');
+  try {
+    await rest.put(
+      Routes.applicationCommands(appID),
+      { body: commands }
+    );
+    console.log('Slash Command 已註冊');
+  } catch (err) {
+    console.error('Command register failed:', err);
+  }
 })();
 
 // =======================
-// 📌 Bot 啟動
+// 📌 Bot Ready
 // =======================
-client.once(Events.ClientReady, readyClient => {
+client.once(Events.ClientReady, () => {
   console.log(`Bot Online: ${client.user.tag}`);
 });
 
-
 // =======================
-// 📌 Slash Command (/gw)
+// 📌 Interaction Handler
 // =======================
 client.on(Events.InteractionCreate, async interaction => {
 
-  // ===== /gw =====
+  // =======================
+  // /gw
+  // =======================
   if (interaction.isChatInputCommand() && interaction.commandName === 'gw') {
 
     const date = interaction.options.getString('日期');
     const deadline = interaction.options.getString('截止');
 
-    //6/6幫戰(兩場)參與調查，截止日6/5 24:00
     const title = `⚔️ ${date}幫戰(兩場)參與調查，截止日${deadline} 24:00`;
 
-    const row = new ActionRowBuilder()
-      .addComponents(
-        new ButtonBuilder()
-          .setCustomId(`gw_yes_${date}`)
-          .setLabel('參加')
-          .setStyle(ButtonStyle.Success),
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`gw_yes_${date}`)
+        .setLabel('參加')
+        .setStyle(ButtonStyle.Success),
 
-        new ButtonBuilder()
-          .setCustomId(`gw_maybe_${date}`)
-          .setLabel('不一定')
-          .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId(`gw_maybe_${date}`)
+        .setLabel('不一定')
+        .setStyle(ButtonStyle.Secondary),
 
-        new ButtonBuilder()
-          .setCustomId(`gw_no_${date}`)
-          .setLabel('無法參加')
-          .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId(`gw_no_${date}`)
+        .setLabel('無法參加')
+        .setStyle(ButtonStyle.Danger),
 
-        new ButtonBuilder()
-          .setCustomId(`gw_result_${date}`)
-          .setLabel('查看結果')
-          .setStyle(ButtonStyle.Primary)
-      );
+      new ButtonBuilder()
+        .setCustomId(`gw_result_${date}`)
+        .setLabel('查看結果')
+        .setStyle(ButtonStyle.Primary)
+    );
 
-    await interaction.reply({
+    return interaction.reply({
       content: title,
       components: [row]
     });
   }
-  
+
+  // =======================
+  // /tw
+  // =======================
   if (interaction.isChatInputCommand() && interaction.commandName === 'tw') {
 
     const date = interaction.options.getString('日期');
     const deadline = interaction.options.getString('截止');
 
-    const title =
-      `🏆 ${date} 幫戰+決賽參與調查\n截止日 ${deadline} 24:00`;
+    const title = `🏆 ${date} 幫戰+決賽參與調查\n截止日 ${deadline} 24:00`;
 
-    const row = new ActionRowBuilder()
-      .addComponents(
+    const row1 = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`tw_full_${date}`)
+        .setLabel('參加幫戰+決賽')
+        .setStyle(ButtonStyle.Success),
 
-        new ButtonBuilder()
-          .setCustomId(`tw_full_${date}`)
-          .setLabel('參加幫戰+決賽')
-          .setStyle(ButtonStyle.Success),
+      new ButtonBuilder()
+        .setCustomId(`tw_yes_${date}`)
+        .setLabel('只參加幫戰')
+        .setStyle(ButtonStyle.Secondary),
 
-        new ButtonBuilder()
-          .setCustomId(`tw_yes_${date}`)
-          .setLabel('只參加幫戰')
-          .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId(`tw_maybe_${date}`)
+        .setLabel('不一定參加幫戰')
+        .setStyle(ButtonStyle.Secondary),
 
-        new ButtonBuilder()
-          .setCustomId(`tw_maybe_${date}`)
-          .setLabel('不一定參加幫戰')
-          .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId(`tw_no_${date}`)
+        .setLabel('無法參加')
+        .setStyle(ButtonStyle.Danger)
+    );
 
-        new ButtonBuilder()
-          .setCustomId(`tw_no_${date}`)
-          .setLabel('無法參加')
-          .setStyle(ButtonStyle.Danger),
-      );
+    const row2 = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`tw_result_${date}`)
+        .setLabel('查看結果')
+        .setStyle(ButtonStyle.Primary)
+    );
 
-    const row2 = new ActionRowBuilder()
-      .addComponents(
-        new ButtonBuilder()
-          .setCustomId(`tw_result_${date}`)
-          .setLabel('查看結果')
-          .setStyle(ButtonStyle.Primary)
-      );
-    await interaction.deferReply({ flags: 64 });
-    await interaction.editReply({
+    return interaction.reply({
       content: title,
-      components: [row, row2]
+      components: [row1, row2]
     });
   }
 
-
   // =======================
-// 📌 Button
-// =======================
-if (interaction.isButton()) {
+  // 📌 Button Handler
+  // =======================
+  if (!interaction.isButton()) return;
 
-  const parts = interaction.customId.split('_');
+  const [mode, type, voteDate] = interaction.customId.split('_');
 
-  const mode = parts[0];      // gw 或 tw
-  const type = parts[1];      // yes、maybe、no、result...
-  const voteDate = parts.slice(2).join('_');
+  if (type != 'result') {
+    // =======================
+    // 🗳 投票
+    // =======================
+    const voteMap = mode == 'gw'
+      ? {
+          yes: ['0', '參加'],
+          maybe: ['1', '不一定'],
+          no: ['2', '無法參加']
+        }
+      : {
+          full: ['0', '參加幫戰+決賽'],
+          yes: ['1', '只參加幫戰'],
+          maybe: ['2', '不一定參加幫戰'],
+          no: ['3', '無法參加']
+        };
 
-  // ======================
-  // 查看結果
-  // ======================
-  if (type === 'result') {
+    if (!voteMap[type]) {
+      return interaction.reply({
+        content: '❌ 無效選項',
+        ephemeral: true
+      });
+    }
+
+    const [voteIndex, voteText] = voteMap[type];
 
     try {
+      await interaction.deferReply({ ephemeral: true });
 
-      await interaction.deferReply({ flags: 64 });
+      await axios.post(GAS_URL, {
+        mode,
+        voteDate,
+        userId: interaction.user.id,
+        username: interaction.user.username,
+        vote: voteIndex
+      }, { timeout: 8000 });
 
-      const res = await axios.get(
-        `${GAS_URL}?mode=${mode}&voteDate=${voteDate}`
-      );
+      return interaction.editReply(`✅ 已投票：${voteText}`);
 
+    } catch (err) {
+      console.error(err);
+      return interaction.editReply('❌ 投票失敗（API timeout 或錯誤）');
+    }
+  }else{
+    // =======================
+    // 📊 查看結果
+    // =======================
+    try {
+      await interaction.deferReply({ ephemeral: true });
+
+      const res = await axios.get(`${GAS_URL}?mode=${mode}&voteDate=${voteDate}`);
       const data = res.data.result;
+      console.log( data);
+      const buildList = arr => arr?.length ? arr.map(id => `<@${id}>`).join(' ') : '無';
 
       // ===== GW =====
-      if (mode === 'gw') {
-
+      if (mode == 'gw') {
         const total = data.yes.length + data.maybe.length + data.no.length;
 
-        await interaction.editReply({
+        return interaction.editReply({
           embeds: [{
             title: `⚔️ ${voteDate} 幫戰投票結果`,
             description: [
               `👥 共 ${total} 人投票`,
               '',
               `🟢 參加 (${data.yes.length})`,
-              data.yes.map(id => `<@${id}>`).join(' ') || '無',
+              buildList(data.yes),
               '',
               `🔵 不一定 (${data.maybe.length})`,
-              data.maybe.map(id => `<@${id}>`).join(' ') || '無',
+              buildList(data.maybe),
               '',
               `🔴 無法參加 (${data.no.length})`,
-              data.no.map(id => `<@${id}>`).join(' ') || '無'
+              buildList(data.no)
             ].join('\n')
           }]
         });
-
       }
 
       // ===== TW =====
-      if (mode === 'tw') {
+      if (mode == 'tw') {
+        const total =
+          data.full.length +
+          data.yes.length +
+          data.maybe.length +
+          data.no.length;
 
-        const total = data.full.length + data.yes.length + data.maybe.length + data.no.length;
-
-        await interaction.editReply({
+        return interaction.editReply({
           embeds: [{
             title: `🏆 ${voteDate} 幫戰+決賽投票結果`,
             description: [
               `👥 共 ${total} 人投票`,
               '',
               `🟢 幫戰+決賽 (${data.full.length})`,
-              data.full.map(id => `<@${id}>`).join(' ') || '無',
+              buildList(data.full),
               '',
               `🔵 只參加幫戰 (${data.yes.length})`,
-              data.yes.map(id => `<@${id}>`).join(' ') || '無',
+              buildList(data.yes),
               '',
-              `🟡 不一定參加幫戰 (${data.maybe.length})`,
-              data.maybe.map(id => `<@${id}>`).join(' ') || '無',
+              `🟡 不一定 (${data.maybe.length})`,
+              buildList(data.maybe),
               '',
               `🔴 無法參加 (${data.no.length})`,
-              data.no.map(id => `<@${id}>`).join(' ') || '無'
+              buildList(data.no)
             ].join('\n')
           }]
         });
-
       }
 
     } catch (err) {
-
-      console.error(err);
-
-      await interaction.editReply({
-        content: '❌ 讀取投票結果失敗'
-      });
-
+       //console.error(err);
+      return interaction.editReply('❌ 讀取投票結果失敗');
     }
-
-    return;
   }
 
-  // ======================
-  // 投票
-  // ======================
-
-  let voteIndex;
-  let voteText;
-
-  // GW
-  if (mode === 'gw') {
-
-    const voteMap = {
-      yes: ['0', '參加'],
-      maybe: ['1', '不一定'],
-      no: ['2', '無法參加']
-    };
-
-    if (!voteMap[type]) return;
-
-    [voteIndex, voteText] = voteMap[type];
-  }
-
-  // TW
-  if (mode === 'tw') {
-
-    const voteMap = {
-      full: ['0', '參加幫戰+決賽'],
-      gw: ['1', '只參加幫戰'],
-      maybe: ['2', '不一定參加幫戰'],
-      no: ['3', '無法參加']
-    };
-
-    if (!voteMap[type]) return;
-
-    [voteIndex, voteText] = voteMap[type];
-  }
-
-  try {
-
-    await interaction.deferReply({ flags: 64 });
-
-    await axios.post(GAS_URL, {
-      mode,
-      voteDate,
-      userId: interaction.user.id,
-      username: interaction.user.username,
-      vote: voteIndex
-    });
-
-    await interaction.editReply({
-      content: `✅ 已投票：${voteText}`
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    await interaction.editReply({
-      content: '❌ 投票失敗'
-    });
-
-  }
-}
+  
 });
-
 
 client.login(botToken);
