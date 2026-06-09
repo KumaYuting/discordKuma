@@ -56,8 +56,8 @@ const commands = [
       opt.setName('截止')
         .setDescription('例如 6/9')
         .setRequired(true)
-    ) ,
-    new SlashCommandBuilder()
+    ),
+  new SlashCommandBuilder()
     .setName('lw')
     .setDescription('建立決賽投票')
     .addStringOption(opt =>
