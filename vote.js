@@ -1,5 +1,5 @@
-const botToken = process.env.DISCORD_TOKEN;
-const appID = process.env.APP_ID;
+const botToken = 'MTQ1MTg3NTk5ODgzNTQwODkwNg.Gb3omh.VHU8QyFnFiDZ32Wj9hDq9As1vPwPTEVboZm4As';
+const appID = '1451875998835408906';
 
 const {
   Client,
@@ -15,7 +15,7 @@ const {
 
 const axios = require('axios');
 
-const GAS_URL = process.env.GAS_URL;
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyAhqjWPw-5aDiwFLjRF_jRD6UflSDDD_OROUYYswt2sY_GqcQLZgA3x3VtxIYNpJ-9PA/exec';
 
 // =======================
 // 🤖 Client
