@@ -310,7 +310,7 @@ client.on(Events.InteractionCreate, async interaction => {
 // 新成員加入
 client.on('guildMemberAdd', async (member) => {
 
-  const channel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID); 
+  const channel = member.guild.systemChannel; // 預設系統頻道
 
   if (!channel) return;
 
@@ -328,7 +328,7 @@ client.on('guildMemberAdd', async (member) => {
 // 成員離開
 client.on('guildMemberRemove', async (member) => {
 
-  const channel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID); 
+  const channel = member.guild.systemChannel; // 預設系統頻道
 
   if (!channel) return;
 
