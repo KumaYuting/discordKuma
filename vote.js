@@ -101,10 +101,10 @@ client.on(Events.InteractionCreate, async interaction => {
   // =======================
   if (interaction.isChatInputCommand() && (interaction.commandName === 'gw' || interaction.commandName === 'lw')) {
 
-    const date = interaction.options.getString('日期');
+    let date = interaction.options.getString('日期');
     const deadline = interaction.options.getString('截止');
 
-    const title = `⚔️ ${date}幫戰(兩場)參與調查，截止日${deadline} 24:00`;
+    let title = `⚔️ ${date}幫戰(兩場)參與調查，截止日${deadline} 24:00`;
     if (interaction.commandName === 'lw'){
       title = `⚔️ ${date}決賽參與調查，截止日${deadline} 24:00`;
       date = `${date}決`;
