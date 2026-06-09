@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const botToken = process.env.DISCORD_TOKEN;
 const appID = process.env.APP_ID;
 
