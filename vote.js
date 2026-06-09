@@ -194,7 +194,7 @@ client.on(Events.InteractionCreate, async interaction => {
     // =======================
     // 🗳 投票
     // =======================
-    const voteMap = mode == 'gw'
+    const voteMap = mode == 'gw' || mode == 'lw'
       ? {
           yes: ['0', '參加'],
           maybe: ['1', '不一定'],
@@ -246,7 +246,7 @@ client.on(Events.InteractionCreate, async interaction => {
       const buildList = arr => arr?.length ? arr.map(id => `<@${id}>`).join(' ') : '無';
 
       // ===== GW =====
-      if (mode == 'gw') {
+      if (mode == 'gw' || mode == 'lw') {
         const total = data.yes.length + data.maybe.length + data.no.length;
 
         return interaction.editReply({
