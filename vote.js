@@ -17,7 +17,7 @@ const {
 
 const axios = require('axios');
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzmHgzJMFI09M-tyr-OuSmP19dB5ck_BTRw5XbIeBbYMiCGMUdrwHZDdkwdZWFk0eBTVA/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyAhqjWPw-5aDiwFLjRF_jRD6UflSDDD_OROUYYswt2sY_GqcQLZgA3x3VtxIYNpJ-9PA/exec';
 
 // =======================
 // 🤖 Client
@@ -47,6 +47,19 @@ const commands = [
   new SlashCommandBuilder()
     .setName('tw')
     .setDescription('建立幫戰+決賽投票')
+    .addStringOption(opt =>
+      opt.setName('日期')
+        .setDescription('例如 6/10')
+        .setRequired(true)
+    )
+    .addStringOption(opt =>
+      opt.setName('截止')
+        .setDescription('例如 6/9')
+        .setRequired(true)
+    ) ,
+    new SlashCommandBuilder()
+    .setName('lw')
+    .setDescription('建立決賽投票')
     .addStringOption(opt =>
       opt.setName('日期')
         .setDescription('例如 6/10')
@@ -88,12 +101,16 @@ client.on(Events.InteractionCreate, async interaction => {
   // =======================
   // /gw
   // =======================
-  if (interaction.isChatInputCommand() && interaction.commandName === 'gw') {
+  if (interaction.isChatInputCommand() && (interaction.commandName === 'gw' || interaction.commandName === 'lw')) {
 
     const date = interaction.options.getString('日期');
     const deadline = interaction.options.getString('截止');
 
     const title = `⚔️ ${date}幫戰(兩場)參與調查，截止日${deadline} 24:00`;
+    if (interaction.commandName === 'lw'){
+      title = `⚔️ ${date}決賽參與調查，截止日${deadline} 24:00`;
+      date = `${date}決`;
+    } 
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
