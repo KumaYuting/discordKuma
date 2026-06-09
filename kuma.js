@@ -21,7 +21,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyAhqjWPw-5aDiwFLjRF_jR
 // 🤖 Client
 // =======================
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds]
+  intents: [GatewayIntentBits.Guilds,GatewayIntentBits.GuildMembers]
 });
 
 // =======================
@@ -305,6 +305,36 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   
+});
+
+// 新成員加入
+client.on('guildMemberAdd', async (member) => {
+
+  const channel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID); 
+
+  if (!channel) return;
+
+  await channel.send(
+    `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
+    `請記得將伺服器暱稱修改為遊戲 ID。\n\n` +
+    `修改方式：\n` +
+    `1️⃣ 點選自己的名字\n` +
+    `2️⃣ 編輯個人資料\n` +
+    `3️⃣ 編輯伺服器個人資料\n` +
+    `4️⃣ 在「伺服器暱稱」輸入遊戲 ID`
+  );
+});
+
+// 成員離開
+client.on('guildMemberRemove', async (member) => {
+
+  const channel = member.guild.channels.cache.get(WELCOME_CHANNEL_ID); 
+
+  if (!channel) return;
+
+  await channel.send(
+    `👋 ${member.user.tag} 已離開伺服器，祝一切順利！`
+  );
 });
 
 client.login(botToken);
