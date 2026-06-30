@@ -10,12 +10,13 @@ const {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  Events
+  Events,
+  PermissionFlagsBits
 } = require('discord.js');
 
 const axios = require('axios');
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyAhqjWPw-5aDiwFLjRF_jRD6UflSDDD_OROUYYswt2sY_GqcQLZgA3x3VtxIYNpJ-9PA/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzTHIdIJs8_IbJvgEvBZ3DFFQEetzxPNHKCC_XxezocH4QJK5h0nIakNuSiRviK8b7qyg/exec';
 
 // =======================
 // 🤖 Client
@@ -55,7 +56,7 @@ const commands = [
         .setDescription('例如 6/9')
         .setRequired(true)
     ),
-    new SlashCommandBuilder()
+  new SlashCommandBuilder()
     .setName('lw')
     .setDescription('建立決賽投票')
     .addStringOption(opt =>
@@ -67,13 +68,30 @@ const commands = [
       opt.setName('截止')
         .setDescription('例如 6/9')
         .setRequired(true)
+    ),
+    new SlashCommandBuilder()
+    .setName('setwelcome')
+    .setDescription('設定伺服器歡迎訊息')
+    .addStringOption(opt =>
+      opt.setName('內容')
+        .setDescription('歡迎訊息內容')
+        .setRequired(true)
     )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 ];
 
 const rest = new REST({ version: '10' }).setToken(botToken);
 
 (async () => {
   try {
+    // const guildID = '1337453186180714577';
+    // await rest.put(
+    //   Routes.applicationGuildCommands(
+    //     appID,
+    //     guildID
+    //   ),
+    //   { body: commands }
+    // );
     await rest.put(
       Routes.applicationCommands(appID),
       { body: commands }
@@ -183,6 +201,34 @@ client.on(Events.InteractionCreate, async interaction => {
     });
   }
 
+  //set welcome
+  if (interaction.isChatInputCommand() && interaction.commandName === 'setwelcome') {
+    const welcomeMessage = interaction.options.getString('內容');
+    await interaction.deferReply({ ephemeral: true });
+    try {
+        await axios.post(GAS_URL, {
+            action: 'setWelcome',
+            guildId: interaction.guild.id,
+            guildName: interaction.guild.name,
+            welcomeMessage
+        });
+
+        return interaction.editReply({
+            content: '✅ 歡迎訊息已更新',
+            ephemeral: true
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        return interaction.editReply({
+            content: '❌ 更新失敗',
+            ephemeral: true
+        });
+
+    }
+  }
+
   // =======================
   // 📌 Button Handler
   // =======================
@@ -246,7 +292,7 @@ client.on(Events.InteractionCreate, async interaction => {
       const buildList = arr => arr?.length ? arr.map(id => `<@${id}>`).join(' ') : '無';
 
       // ===== GW =====
-      if (mode == 'gw' || mode == 'lw') {
+      if (mode == 'gw') {
         const total = data.yes.length + data.maybe.length + data.no.length;
 
         return interaction.editReply({
@@ -303,8 +349,6 @@ client.on(Events.InteractionCreate, async interaction => {
       return interaction.editReply('❌ 讀取投票結果失敗');
     }
   }
-
-  
 });
 
 // 新成員加入
@@ -314,15 +358,31 @@ client.on('guildMemberAdd', async (member) => {
 
   if (!channel) return;
 
-  await channel.send(
-    `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
-    `請記得將伺服器暱稱修改為遊戲 ID。\n\n` +
-    `修改方式：\n` +
-    `1️⃣ 點選自己的名字\n` +
-    `2️⃣ 編輯個人資料\n` +
-    `3️⃣ 編輯伺服器個人資料\n` +
-    `4️⃣ 在「伺服器暱稱」輸入遊戲 ID`
-  );
+  const res = await axios.get(GAS_URL, {
+    params: {
+        action: "getGuildConfig",
+        guildId: member.guild.id
+    }
+  });
+
+  const msg = res.data.welcomeMessage
+    .replace("{user}", `<@${member.id}>`)
+    .replace("{server}", member.guild.name)
+    .replace("{name}", member.displayName)
+    .replace("{count}", member.guild.memberCount);
+
+  channel.send(msg);
+
+
+  // await channel.send(
+  //   `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
+  //   `請記得將伺服器暱稱修改為遊戲 ID。\n\n` +
+  //   `修改方式：\n` +
+  //   `1️⃣ 點選自己的名字\n` +
+  //   `2️⃣ 編輯個人資料\n` +
+  //   `3️⃣ 編輯伺服器個人資料\n` +
+  //   `4️⃣ 在「伺服器暱稱」輸入遊戲 ID`
+  // );
 });
 
 // 成員離開
@@ -338,3 +398,4 @@ client.on('guildMemberRemove', async (member) => {
 });
 
 client.login(botToken);
+
