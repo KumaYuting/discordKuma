@@ -372,11 +372,11 @@ client.on('guildMemberAdd', async (member) => {
   //   .replace("{count}", member.guild.memberCount);
 
   // channel.send(msg);
-
-  if(member.guild.guildId == '1521089728559190027' || member.guild.guildId == '1337453186180714577'){
+  console.log (`TEST: ${member.guild.id}`);
+  if(member.guild.id == '1521089728559190027' || member.guild.id == '1337453186180714577'){
     await channel.send(
       `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
-      `請記得將伺服器暱稱修改為：俱樂部名+遊戲 ID。\n\n` +
+      `請記得將伺服器暱稱修改為：俱樂部名+遊戲 ID。\n` +
       `修改方式：\n` +
       `1️⃣ 點選自己的名字\n` +
       `2️⃣ 編輯個人資料\n` +
@@ -386,7 +386,7 @@ client.on('guildMemberAdd', async (member) => {
   }else{
     await channel.send(
       `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
-      `請記得將伺服器暱稱修改為遊戲 ID。\n\n` +
+      `請記得將伺服器暱稱修改為遊戲 ID。\n` +
       `修改方式：\n` +
       `1️⃣ 點選自己的名字\n` +
       `2️⃣ 編輯個人資料\n` +
