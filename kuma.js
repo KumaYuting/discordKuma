@@ -358,31 +358,43 @@ client.on('guildMemberAdd', async (member) => {
 
   if (!channel) return;
 
-  const res = await axios.get(GAS_URL, {
-    params: {
-        action: "getGuildConfig",
-        guildId: member.guild.id
-    }
-  });
+  // const res = await axios.get(GAS_URL, {
+  //   params: {
+  //       action: "getGuildConfig",
+  //       guildId: member.guild.id
+  //   }
+  // });
 
-  const msg = res.data.welcomeMessage
-    .replace("{user}", `<@${member.id}>`)
-    .replace("{server}", member.guild.name)
-    .replace("{name}", member.displayName)
-    .replace("{count}", member.guild.memberCount);
+  // const msg = res.data.welcomeMessage
+  //   .replace("{user}", `<@${member.id}>`)
+  //   .replace("{server}", member.guild.name)
+  //   .replace("{name}", member.displayName)
+  //   .replace("{count}", member.guild.memberCount);
 
-  channel.send(msg);
+  // channel.send(msg);
 
-
-  // await channel.send(
-  //   `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
-  //   `請記得將伺服器暱稱修改為遊戲 ID。\n\n` +
-  //   `修改方式：\n` +
-  //   `1️⃣ 點選自己的名字\n` +
-  //   `2️⃣ 編輯個人資料\n` +
-  //   `3️⃣ 編輯伺服器個人資料\n` +
-  //   `4️⃣ 在「伺服器暱稱」輸入遊戲 ID`
-  // );
+  if(member.guildId == '1521089728559190027' || member.guildId == '1337453186180714577'){
+    await channel.send(
+      `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
+      `請記得將伺服器暱稱修改為：俱樂部名+遊戲 ID。\n\n` +
+      `修改方式：\n` +
+      `1️⃣ 點選自己的名字\n` +
+      `2️⃣ 編輯個人資料\n` +
+      `3️⃣ 編輯伺服器個人資料\n` +
+      `4️⃣ 在「伺服器暱稱」輸入遊戲 ID`
+    );
+  }else{
+    await channel.send(
+      `🎉 歡迎 ${member} 加入「${member.guild.name}」！\n\n` +
+      `請記得將伺服器暱稱修改為遊戲 ID。\n\n` +
+      `修改方式：\n` +
+      `1️⃣ 點選自己的名字\n` +
+      `2️⃣ 編輯個人資料\n` +
+      `3️⃣ 編輯伺服器個人資料\n` +
+      `4️⃣ 在「伺服器暱稱」輸入遊戲 ID`
+    );
+  }
+  
 });
 
 // 成員離開
