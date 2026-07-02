@@ -1,5 +1,7 @@
-const botToken = 'MTQ1MTg3NTk5ODgzNTQwODkwNg.Gb3omh.VHU8QyFnFiDZ32Wj9hDq9As1vPwPTEVboZm4As';
-const appID = '1451875998835408906';
+require('dotenv').config();
+
+const botToken = process.env.DISCORD_TOKEN;
+const appID = process.env.APP_ID;
 
 const {
   Client,
@@ -16,7 +18,7 @@ const {
 
 const axios = require('axios');
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzTHIdIJs8_IbJvgEvBZ3DFFQEetzxPNHKCC_XxezocH4QJK5h0nIakNuSiRviK8b7qyg/exec';
+const GAS_URL = process.env.GAS_URL;
 
 // =======================
 // 🤖 Client
